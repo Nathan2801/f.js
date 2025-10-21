@@ -26,6 +26,9 @@ const setvalue = a => e => side (e) (_ => e.value = a)
 /// :: String -> (Event -> a) -> Element -> Element
 const addevent = e => f => a => side (a) (_ => a.addEventListener (e, f))
 
+/// :: String -> Element -> Element
+const dispatch = e => a => side (a) (_ => a.dispatchEvent (new CustomEvent (e)))
+
 /// :: (Event -> a) -> Element -> Element 
 const onclick = setmethod ("onclick")
 
@@ -64,6 +67,9 @@ const setid = _id => setattr (["id", _id])
 
 /// :: String -> Element | undefined
 const query = query => document.querySelector (query)
+
+/// :: Element -> String -> Element | undefined
+const queryfrom = e => query => e.querySelector (query)
 
 /// :: String -> [Element | undefined]
 const queryall = query => document.querySelectorAll (query)
@@ -189,8 +195,11 @@ const getchildren = p => [...p.children]
 /// :: Int -> Element a -> Element b
 const getchild = i => a => a.children[i]
 
+/// :: Int -> Element -> Element
+const removechild = c => a => side (a) (_ => a.removeChild (c))
+
 /// :: Element a -> Element a
-const removelast = a => side (a) (_ => a.removeChild(a.lastChild))
+const removelast = a => side (a) (_ => a.removeChild (a.lastChild))
 
 /// :: Element a -> Element a
 const erase = a => (
@@ -250,12 +259,12 @@ const select = options => name => (
 )
 
 /// :: String -> Element input
-const input = name => type => _oninput => (
+const input = name => type => (
 	Monad ("input")
 	.$ (elem)
 	.$ (setattr (["type", type]))
 	.$ (setattr (["name", name]))
-	.$ (oninput (_oninput ?? bind ("oninput not provided") (debug)))
+	.$ (oninput (_ => debug ("oninput not provided")))
 	.$ ()
 )
 
@@ -266,17 +275,17 @@ const placeholder = s => e => setattr (["placeholder", s]) (e)
 const bindinput = f => oninput ($ (f) (value) (target))
 
 /// :: String -> Element input
-const inputtext = name => input (name) ("text") (pass)
+const inputtext = name => input (name) ("text")
 
 /// :: String -> String -> (Event -> _) -> Element input
 const inputnumber = name => (
-	Monad (input (name) ("number") (pass))
+	Monad (input (name) ("number"))
 	.$ ()
 ) 
 
 /// :: String -> (Event -> _) -> Element input
 const inputsubmit = value => (
-	Monad (input ("") ("submit") ())
+	Monad (input ("") ("submit"))
 	.$ (setattr (["value", value]))
 	.$ ()
 )
@@ -300,12 +309,19 @@ const button = value => (
 	.$ ()
 )
 
+/// SliderOpts
+const SliderOpts = record ([
+	, field ("min", Int, 0)
+	, field ("max", Int, 100)
+	, field ("step", Int, 1)
+])
+
 /// :: Int -> Int -> Int -> (Event -> _) -> Element input
-const slider = name => min => max => step => _oninput => (
-	Monad (input (name) ("range") (_oninput))
-	.$ (mapif (setattr ([  "min",  min])) (  min))
-	.$ (mapif (setattr ([  "max",  max])) (  max))
-	.$ (mapif (setattr ([ "step", step])) ( step))
+const slider = name => opts => (
+	Monad (input (name) ("range"))
+	.$ (setattr (["min", SliderOpts.min (opts)]))
+	.$ (setattr (["max", SliderOpts.max (opts)]))
+	.$ (setattr (["step", SliderOpts.step (opts)]))
 	.$ ()
 )
 
