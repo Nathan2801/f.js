@@ -245,6 +245,7 @@ const List = x => (
 const TypedList = type => x => maplist (type) (List (x))
 
 /// Create a range list.
+/// NOTE: range may be a iterator not a list.
 /// Int -> Int -> [Int]
 const range = a => b => (
 	a > b
