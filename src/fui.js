@@ -386,7 +386,7 @@ const Tab = record ([
 Tab.new = a => {
 	const $id = iid ()
 	return Tab ({
-		button: setattr (["page-ref", $id]) (a?.button ?? button ("Tab") ()),
+		button: setattr (["page-ref", $id]) (a?.button ?? button ("Tab")),
 		content: setattr (["page-id", $id]) (a?.content ?? h1 ("Tab content"))
 	})
 }
