@@ -41,6 +41,17 @@ export const add = db => store => value => (
 	))
 )
 
+export const put = db => store => value => (
+	new Promise ((ok, fail) => (
+		Monad (db.transaction ([store], "readwrite"))
+		.$(objectstore (store))
+		.$(s => s.put(value))
+		.$(setmethod ("onerror") (asyncdbfail (fail)))
+		.$(setmethod ("onsuccess") (asyncdbsuccess (ok)))
+		.$()
+	))
+)
+
 export const get = db => store => key => (
 	new Promise ((ok, fail) => (
 		Monad (db.transaction ([store]))
