@@ -313,7 +313,7 @@ const button = value => (
 const SliderOpts = record ([
 	, field ("min", Int, 0)
 	, field ("max", Int, 100)
-	, field ("step", Int, 1)
+	, field ("step", Num, 1)
 ])
 
 /// :: Int -> Int -> Int -> (Event -> _) -> Element input

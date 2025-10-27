@@ -378,6 +378,13 @@ const Int = a => (
 	: 0
 )
 
+/// :: Num
+const Num = a => (
+	!Number.isNaN (Number (a))
+	? Number (a)
+	: 0.0
+)
+
 /// :: Num -> Num -> Num
 /// NOTE: maybe this could be called _sum_.
 const add = a => b => a + b
