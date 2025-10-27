@@ -378,7 +378,7 @@ const liveentry = prefix => entry => side (entry) (_ => {
 
 /// :: {..} -> Tab
 const Tab = record ([
-	  field ( "button", raw)
+	, field ( "button", raw)
 	, field ("content", raw)
 ])
 
@@ -402,37 +402,37 @@ const tabpage_ = vertical => pages => id_ => (
 	Monad (vertical ? vbox () : box())
 	.$ (child (
 		Monad (vbox ())
-		.$(setid (id_ + "-content"))
-		.$(mapif (setstyle (["order", 1])) (!vertical))
-		.$(children (
+		.$ (setid (id_ + "-content"))
+		.$ (mapif (setstyle (["order", 1])) (!vertical))
+		.$ (children (
 			maplist (Tab.content) (pages)
-		))
-		.$(swap (side) (
+		)) 
+		.$ (swap (side) (
 			chainpp (maplist (hide)) (rest) (getchildren)
-		))
-		.$()
+		)) 
+		.$ ()
 	)) 
 	.$ (child (
 		Monad (vertical ? box () : vbox())
-		.$(children (
+		.$ (children (
 			maplist (Tab.button) (pages)
-		))
-		.$(swap (side) (
+		)) 
+		.$ (swap (side) (
 			chainpp
 			(maplist (
 				onclick (ev =>
 					Monad (id (id_ + "-content"))
-					.$(getchildren)
-					.$(splitbypred (e =>
+					.$ (getchildren)
+					.$ (splitbypred (e =>
 						attr ("page-id") (e) === attr ("page-ref") (target (ev))
-					))
-					.$(swap (side) (chain (maplist (show)) (fst)))
-					.$(swap (side) (chain (maplist (hide)) (snd)))
+					)) 
+					.$ (swap (side) (chain (maplist (show)) (fst)))
+					.$ (swap (side) (chain (maplist (hide)) (snd)))
 				)
 			))
 			(getchildren)
-		))
-		.$()
+		)) 
+		.$ ()
 	)) 
 	.$ ()
 )
