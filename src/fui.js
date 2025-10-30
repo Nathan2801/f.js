@@ -445,6 +445,27 @@ const tabcontroller = e => i => (
 	chainpp (click) (nth (i)) (getchildren) (getchild (1)) (e)
 )
 
+/// :: Element -> {state: Any} -> Element
+const Stateful = element => state => {
+	const $parent = (
+		Monad ()
+		.$ (container)
+		.$ ($ (child) (element) (state.state))
+		.$ ()
+	)
+	state.state = new Proxy (state.state, {
+		set (o, k, v) {
+			Reflect.set (...arguments)
+			Monad ($parent)
+			.$ (setinner (""))
+			.$ ($ (child) (element) (state.state))
+			.$ ()
+			return true
+		}
+	})
+	return $parent
+}
+
 /// :: String
 const defaccent = "#fb568a";
 
