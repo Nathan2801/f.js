@@ -74,6 +74,9 @@ const queryfrom = e => query => e.querySelector (query)
 /// :: String -> [Element | undefined]
 const queryall = query => document.querySelectorAll (query)
 
+/// :: Element -> String -> [Element | undefined]
+const queryallfrom = e => query => e.querySelectorAll (query)
+
 /// :: String -> Element a -> String
 const attr = k => a => a.getAttribute(k)
 
