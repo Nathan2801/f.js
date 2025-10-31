@@ -268,11 +268,20 @@ const fst = xs => xs[0]
 /// :: [a] -> a
 const snd = xs => xs[1]
 
+/// Returns the last item in the list.
+/// :: [a] -> a | undefined
+const last = xs => xs[len (xs) - 1]
+
 /// Returns the nth item in the list.
 /// :: Int -> [a] -> a
 const nth = n => xs => xs[n]
 
+/// Returns all elements except the last one.
+/// :: [a] -> [a]
+const init = xs => xs.slice (0, len (xs) - 1)
+
 /// Returns the list without the first argument.
+/// NOTE: in haskell this is called tail.
 /// :: [a] -> [a]
 const rest = ([x, ...xs]) => xs
 
