@@ -323,6 +323,18 @@ const fold = f => a => ([x, ...xs]) => (
 	: fold (f) (f (a) (x)) (xs)
 )
 
+/// Find in list.
+/// :: (a -> Bool) -> [a] -> a
+const find = f => xs => {
+	const $x = fst (xs)
+	const $xs = rest (xs)
+	return (
+		$x === undefined || f ($x)
+		? $x
+		: find (f) ($xs)
+	)
+}
+
 /// Filter a list.
 /// :: (a -> Bool) -> [a]
 const filter = f => ([x, ...xs]) => (
