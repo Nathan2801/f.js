@@ -42,6 +42,12 @@ const onsubmit = setmethod ("onsubmit")
 const onchange = setmethod ("onchange")
 
 /// :: (Event -> a) -> Element -> Element
+const onmouseenter = setmethod ("onmouseenter")
+
+/// :: (Event -> a) -> Element -> Element
+const onmouseleave = setmethod ("onmouseleave")
+
+/// :: (Event -> a) -> Element -> Element
 const prevent = ev => side (ev) (_ => ev.preventDefault())
 
 /// :: Element a -> Element a
@@ -145,6 +151,9 @@ const fontfamily = v => setstyle (["font-family", v])
 
 /// :: String -> Element a -> Element a
 const flexwrap = v => setstyle (["flex-wrap", v])
+
+/// :: String -> Element -> Element
+const cursor = v => setstyle (["cursor", v])
 
 /// :: Element a -> String
 const inner = a => a.innerHTML
