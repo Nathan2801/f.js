@@ -404,50 +404,54 @@ Tab.new = a => {
 }
 
 /// :: [SingleTabPage] -> Element tabpage
-const tabpage = pages => tabpage_ (true) (pages) (iid ())
+const tabpage = pages => tabpage_ (false) (vbox) (box) (pages)
 
 /// :: [SingleTabPage] -> Element tabpage
-const tabpageh = pages => tabpage_ (false) (pages) (iid ())
+const tabpageh = pages => tabpage_ (true) (box) (vbox) (pages)
 
 /// :: [SingleTabPage] -> Int -> Element tabpage
-const tabpage_ = vertical => pages => id_ => (
-	Monad (vertical ? vbox () : box())
-	.$ (child (
-		Monad (vbox ())
-		.$ (setid (id_ + "-content"))
-		.$ (mapif (setstyle (["order", 1])) (!vertical))
-		.$ (children (
-			maplist (Tab.content) (pages)
-		)) 
-		.$ (swap (side) (
-			chainpp (maplist (hide)) (rest) (getchildren)
-		)) 
-		.$ ()
-	)) 
-	.$ (child (
-		Monad (vertical ? box () : vbox())
-		.$ (children (
-			maplist (Tab.button) (pages)
-		)) 
-		.$ (swap (side) (
-			chainpp
-			(maplist (
-				onclick (ev =>
-					Monad (id (id_ + "-content"))
-					.$ (getchildren)
-					.$ (splitbypred (e =>
-						attr ("page-id") (e) === attr ("page-ref") (target (ev))
-					)) 
-					.$ (swap (side) (chain (maplist (show)) (fst)))
-					.$ (swap (side) (chain (maplist (hide)) (snd)))
-				)
+const tabpage_ = before => abox => bbox => pages => {
+	const $id = iid ()
+	return (
+		Monad ()
+		.$ (abox)
+		.$ (child (
+			Monad (vbox ())
+			.$ (setid ($id + "-content"))
+			.$if (before) (setstyle (["order", 1]))
+			.$ (children (
+				maplist (Tab.content) (pages)
 			))
-			(getchildren)
-		)) 
+			.$ (swap (side) (
+				$ (maplist (hide)) (rest) (getchildren)
+			))
+			.$ ()
+		))
+		.$ (child (
+			Monad ()
+			.$ (bbox)
+			.$ (children (
+				maplist (Tab.button) (pages)
+			))
+			.$ (swap (side) (
+				$ (maplist (
+					onclick (ev =>
+						Monad (id ($id + "-content"))
+						.$ (getchildren)
+						.$ (splitbypred (e =>
+							attr ("page-id") (e) === attr ("page-ref") (target (ev))
+						))
+						.$ (swap (side) ($ (maplist (show)) (fst)))
+						.$ (swap (side) ($ (maplist (hide)) (snd)))
+					)
+				))
+				(getchildren)
+			))
+			.$ ()
+		))
 		.$ ()
-	)) 
-	.$ ()
-)
+	)
+}
 
 /// :: Element tabpage -> Int -> Side ()
 const tabcontroller = e => i => (
