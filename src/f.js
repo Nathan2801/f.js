@@ -70,13 +70,21 @@ const $ = chainpp
 /// Similar to _chainpp_ but uses a list as input.
 /// NOTE: function execution in order.
 /// :: [(a -> a)] -> (a -> a)
-const compose = ([f, ...fs]) => (
-	f === undefined
-	? compose (fs)
-	: len (fs) <= 0
-	? f
-	: chain (compose (fs)) (f)
-)
+const compose = xs => {
+	const $f = fst (xs)
+	const $fs = rest (xs)
+	return (
+		$f === undefined
+		? (
+			len ($fs) > 0
+			? compose ($fs)
+			: pass
+		)
+		: len ($fs) <= 0
+		? $f
+		: chain (compose ($fs)) ($f)
+	)
+}
 
 /// Wraps {f} inside a non-arg function.
 /// :: () -> None -> ()
