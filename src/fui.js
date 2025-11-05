@@ -155,6 +155,12 @@ const flexwrap = v => setstyle (["flex-wrap", v])
 /// :: String -> Element -> Element
 const cursor = v => setstyle (["cursor", v])
 
+/// :: Element -> Element
+const fillspace = compose ([
+	, width (perc (100))
+	, height (perc (100))
+])
+
 /// :: Element a -> String
 const inner = a => a.innerHTML
 
@@ -248,10 +254,16 @@ const label = inner => chain (setinner (inner)) (elem) ("label")
 const container = _ => elem ("div")
 
 /// :: _ -> Element div
-const box = _ => chain (setstyle (["display", "flex"])) (elem) ("div")
+const box = $ (setstyle (["display", "flex"])) (container)
 
 /// :: _ -> Element div
-const vbox = _ => chain (setstyle (["flexDirection", "column"])) (box) ()
+const vbox = $ (setstyle (["flexDirection", "column"])) (box)
+
+/// :: _ => Element div
+const fullbox = $ (fillspace) (box)
+
+/// :: _ => Element div
+const fullvbox = $ (fillspace) (vbox)
 
 /// :: String -> [String] -> Element select
 const select = options => name => (
