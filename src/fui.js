@@ -410,8 +410,8 @@ const Tab = record ([
 Tab.new = a => {
 	const $id = iid ()
 	return Tab ({
-		button: setattr (["page-ref", $id]) (a?.button ?? button ("Tab")),
-		content: setattr (["page-id", $id]) (a?.content ?? h1 ("Tab content"))
+		button: a?.button ?? button ("Tab"),
+		content: a?.content ?? h1 ("Tab content"),
 	})
 }
 
@@ -423,43 +423,26 @@ const tabpageh = pages => tabpage_ (true) (box) (vbox) (pages)
 
 /// :: [SingleTabPage] -> Int -> Element tabpage
 const tabpage_ = before => container => btncontainer => pages => {
-	const $id = iid ()
+	const $state = { state: { page: fst (pages) } }
+	const $content = s => s.page?.content ?? text ("nothing")
 	return (
 		Monad ()
 		.$ (container)
 		.$ (fillspace)
 		.$ (child (
-			Monad ()
-			.$ (fullbox)
-			.$ (setid ($id + "-content"))
-			.$if (before) (setstyle (["order", 1]))
-			.$ (children (
-				maplist (Tab.content) (pages)
-			))
-			.$ (swap (side) (
-				$ (maplist (hide)) (rest) (getchildren)
-			))
-			.$ ()
+			Stateful (fullbox) ($content) ($state)
 		))
 		.$ (child (
 			Monad ()
 			.$ (btncontainer)
+			.$if (before) (setstyle (["order", -1]))
 			.$ (children (
-				maplist (Tab.button) (pages)
-			))
-			.$ (swap (side) (
-				$ (maplist (
-					onclick (ev =>
-						Monad (id ($id + "-content"))
-						.$ (getchildren)
-						.$ (splitbypred (e =>
-							attr ("page-id") (e) === attr ("page-ref") (target (ev))
-						))
-						.$ (swap (side) ($ (maplist (show)) (fst)))
-						.$ (swap (side) ($ (maplist (hide)) (snd)))
-					)
+				Monad (pages)
+				.$ (maplist (Tab.button))
+				.$ (maplisti (
+					([e, i]) => onclick (_ => $state.state.page = pages[i]) (e)
 				))
-				(getchildren)
+				.$ ()
 			))
 			.$ ()
 		))
