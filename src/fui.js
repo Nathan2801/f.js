@@ -422,13 +422,15 @@ const tabpage = pages => tabpage_ (false) (vbox) (box) (pages)
 const tabpageh = pages => tabpage_ (true) (box) (vbox) (pages)
 
 /// :: [SingleTabPage] -> Int -> Element tabpage
-const tabpage_ = before => abox => bbox => pages => {
+const tabpage_ = before => container => btncontainer => pages => {
 	const $id = iid ()
 	return (
 		Monad ()
-		.$ (abox)
+		.$ (container)
+		.$ (fillspace)
 		.$ (child (
-			Monad (vbox ())
+			Monad ()
+			.$ (fullbox)
 			.$ (setid ($id + "-content"))
 			.$if (before) (setstyle (["order", 1]))
 			.$ (children (
@@ -441,7 +443,7 @@ const tabpage_ = before => abox => bbox => pages => {
 		))
 		.$ (child (
 			Monad ()
-			.$ (bbox)
+			.$ (btncontainer)
 			.$ (children (
 				maplist (Tab.button) (pages)
 			))
@@ -471,7 +473,7 @@ const tabcontroller = e => i => (
 )
 
 /// :: Element -> {state: Any} -> Element
-const Stateful = element => state => {
+const Stateful = container => element => state => {
 	const $parent = (
 		Monad ()
 		.$ (container)
