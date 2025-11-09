@@ -120,10 +120,16 @@ const width = v => setstyle (["width", v])
 const minwidth = v => setstyle (["min-width", v])
 
 /// :: String -> Element a -> Element a
+const maxwidth = v => setstyle (["max-width", v])
+
+/// :: String -> Element a -> Element a
 const height = v => setstyle (["height", v])
 
 /// :: String -> Element a -> Element a
 const minheight = v => setstyle (["min-height", v])
+
+/// :: String -> Element a -> Element a
+const maxheight = v => setstyle (["max-height", v])
 
 /// :: String -> Element a -> Element a
 const margin = v => setstyle (["margin", v])
