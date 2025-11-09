@@ -415,37 +415,40 @@ Tab.new = a => {
 	})
 }
 
-/// :: [SingleTabPage] -> Element tabpage
-const tabpage = pages => tabpage_ (false) (vbox) (box) (pages)
+/// :: TabPageOpts
+const TabPageOpts = record ([
+	, field ("container", Any, vbox)
+	, field ("contentcontainer", Any, box)
+	, field ("buttonscontainer", Any, box)
+	, field ("buttonsbefore", Boolean, false)
+])
 
-/// :: [SingleTabPage] -> Element tabpage
-const tabpageh = pages => tabpage_ (true) (box) (vbox) (pages)
-
-/// :: [SingleTabPage] -> Int -> Element tabpage
-const tabpage_ = before => container => btncontainer => pages => {
+/// :: TabPageOpts -> [SingleTabPage] -> Element tabpage
+const tabpage = opts => pages => {
+	opts = TabPageOpts (opts)
 	const $state = { state: { page: fst (pages) } }
 	const $content = s => s.page?.content ?? text ("nothing")
 	return (
 		Monad ()
-		.$ (container)
+		.$ (opts.container)
 		.$ (fillspace)
-		.$ (child (
-			Stateful (fullbox) ($content) ($state)
-		))
-		.$ (child (
-			Monad ()
-			.$ (btncontainer)
-			.$if (before) (setstyle (["order", -1]))
-			.$ (children (
-				Monad (pages)
-				.$ (maplist (Tab.button))
-				.$ (maplisti (
-					([e, i]) => onclick (_ => $state.state.page = pages[i]) (e)
+		.$ (children ([
+			, Stateful (fullbox) ($content) ($state)
+			, (
+				Monad ()
+				.$ (opts.buttonscontainer)
+				.$if (opts.buttonsbefore) (setstyle (["order", -1]))
+				.$ (children (
+					Monad (pages)
+					.$ (maplist (Tab.button))
+					.$ (maplisti (
+						([e, i]) => onclick (_ => $state.state.page = pages[i]) (e)
+					))
+					.$ ()
 				))
 				.$ ()
-			))
-			.$ ()
-		))
+			)
+		]))
 		.$ ()
 	)
 }
