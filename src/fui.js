@@ -425,7 +425,8 @@ const TabPageOpts = record ([
 
 /// :: TabPageOpts -> [SingleTabPage] -> Element tabpage
 const tabpage = opts => pages => {
-	opts = TabPageOpts (opts)
+	opts  = TabPageOpts (opts)
+	pages = List (pages)
 	const $state = { state: { page: fst (pages) } }
 	const $content = s => s.page?.content ?? text ("nothing")
 	return (
