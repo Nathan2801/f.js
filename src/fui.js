@@ -406,20 +406,17 @@ const liveentry = prefix => entry => side (entry) (_ => {
 	update ()
 })
 
-/// :: {..} -> Tab
+/// :: Tab
 const Tab = record ([
-	, field ( "button", raw)
-	, field ("content", raw)
+	, field ( "button", Any)
+	, field ("content", Any)
 ])
 
 /// :: {..} -> Tab
-Tab.new = a => {
-	const $id = iid ()
-	return Tab ({
-		button: a?.button ?? button ("Tab"),
-		content: a?.content ?? h1 ("Tab content"),
-	})
-}
+Tab.new = a => Tab ({
+	button: a?.button ?? button ("[button]"),
+	content: a?.content ?? text ("[content]"),
+})
 
 /// :: TabPageOpts
 const TabPageOpts = record ([
@@ -433,8 +430,14 @@ const TabPageOpts = record ([
 const tabpage = opts => pages => {
 	opts  = TabPageOpts (opts)
 	pages = List (pages)
-	const $state = { state: { page: fst (pages) } }
-	const $content = s => s.page?.content ?? text ("nothing")
+	const $state = { state: { selected: 0 } }
+	const $content = s => (
+		pages[s.selected]?.content ?? text ("[content]")
+	)
+	const $container = compose ([
+		, opts.buttonscontainer
+		, mapif (setstyle (["order", -1])) (opts.buttonsbefore)
+	])
 	return (
 		Monad ()
 		.$ (opts.container)
@@ -442,18 +445,22 @@ const tabpage = opts => pages => {
 		.$ (children ([
 			, Stateful (fullbox) ($content) ($state)
 			, (
-				Monad ()
-				.$ (opts.buttonscontainer)
-				.$if (opts.buttonsbefore) (setstyle (["order", -1]))
-				.$ (children (
+				Stateful ($container) (_ => (
 					Monad (pages)
 					.$ (maplist (Tab.button))
 					.$ (maplisti (
-						([e, i]) => onclick (_ => $state.state.page = pages[i]) (e)
+						([e, i]) => {
+							const $e = (
+								typeof e === "function"
+								? e (i === $state.state.selected)
+								: e
+							)
+							onclick (_ => $state.state.selected = i) ($e)
+							return $e
+						}
 					))
 					.$ ()
-				))
-				.$ ()
+				)) ($state)
 			)
 		]))
 		.$ ()
@@ -470,16 +477,18 @@ const Stateful = container => element => state => {
 	const $parent = (
 		Monad ()
 		.$ (container)
-		.$ ($ (child) (element) (state.state))
+		.$ ($ (children) (List) (element) (state.state))
 		.$ ()
 	)
 	state.state = new Proxy (state.state, {
 		set (o, k, v) {
 			Reflect.set (...arguments)
-			Monad ($parent)
-			.$ (setinner (""))
-			.$ ($ (child) (element) (state.state))
-			.$ ()
+			_ = (
+				Monad ($parent)
+				.$ (setinner (""))
+				.$ ($ (children) (List) (element) (state.state))
+				.$ ()
+			)
 			return true
 		}
 	})
