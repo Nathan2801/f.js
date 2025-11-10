@@ -245,8 +245,7 @@ const List = x => (
 	? filter (ne (undefined)) (x)
 	: x === undefined || x === null
 	? []
-	: side ([])
-	(_ => $ (error) (format ("Unable to turn '{}' into list.")) ([x]))
+	: [x]
 )
 
 /// TypedList type function.
