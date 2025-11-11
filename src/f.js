@@ -109,20 +109,27 @@ const compose = xs => {
 
 /// Wraps {f} inside a non-arg function.
 /// :: () -> None -> ()
-const wrap = f => _ => f ()
+const wrap = deprecated ("wrap deprecated, perfer arrow functions") (
+	f => _ => f ()
+)
 
 /// Returns a new function that calls {f} with {a} as argument.
-/// NOTE: wrap1 remove because it's same as this but just swapped.
 /// :: a -> (a -> b) -> () -> b
-const bind = a => f => _ => f (a)
+const bind = deprecated ("bind deprecated, prefer arrow functions") (
+	a => f => _ => f (a)
+)
 
 /// Maps {a} if {c} is truthy otherwise return {a}.
 /// :: (a -> b) -> Bool -> a -> a | b
-const mapif = f => c => a => c ? f (a) : a
+const mapif = deprecated ("mapif deprecated, perfer ifa") (
+	f => c => a => c ? f (a) : a
+)
 
 /// Maps {a} if {c} is truthy returning {c}.
 /// :: (a -> b) -> Bool -> a -> a | b
-const mapif1 = f => c => a => side (c) (_ => c ? f (a) : a)
+const mapif1 = deprecated ("mapif1 deprecated, what this means?") (
+	f => c => a => side (c) (_ => c ? f (a) : a)
+)
 
 /// Creates a pair.
 /// :: a -> b -> [a, b]
