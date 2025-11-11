@@ -10,6 +10,13 @@
 /// Makes arrow functions syntax a little better.
 let _ = null
 
+/// Defines a deprecated function.
+/// :: String -> (a -> b) -> (a -> b)
+const deprecated = s => f => a => {
+	console.warn (s)
+	return f (a)
+}
+
 /// A empty function.
 /// :: _ -> _
 const pass = _ => _
