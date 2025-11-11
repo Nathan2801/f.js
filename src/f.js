@@ -62,11 +62,15 @@ const ifa = c => f => a => c (a) ? f (a) : a
 
 /// A ternary operator but with functions.
 /// :: (a -> b) -> (a -> b) -> Bool -> b
-const tern = f => g => c => c ? f () : g ()
+const tern = deprecated ("tern deprecated, just use default ternary") (
+	f => g => c => c ? f () : g ()
+)
 
 /// Same as _tern_ but uses a function to obtain the condition.
 /// :: (a -> b) -> (a -> b) -> (c -> Bool) -> b
-const ternf = f => g => h => c => h (c) ? f () : g ()
+const ternf = deprecated ("ternf deprecated, just use default ternary") (
+	f => g => h => c => h (c) ? f () : g ()
+)
 
 /// Chain two functions together.
 /// :: (b -> c) -> (a -> b) -> a -> c
