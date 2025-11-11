@@ -147,29 +147,11 @@ const mappair = f => g => ([a, c]) => [f (a), g (c)]
 /// :: (a -> b -> c) -> [a, b] -> c
 const pairargs = f => ([a, b]) => f (a) (b)
 
-/// Simulate match keywords from others languages.
-/// :: [f] -> a -> ([b, f]) | undefined -> ...
-const match_ = fs => x => yf => (
-	typeof snd (yf) === "function"
-	? (
-		fst (yf) === null
-		? (
-			len (fs) === 0
-			? snd (yf) ()
-			: fst (fs) ()
-		)
-		: (
-			x === fst (yf)
-			? match_ (append (snd (yf)) (fs)) (x)
-			: match_ (fs) (x)
-		)
-	)
-	: match_ (fs) (x)
+/// Pattern matching.
+/// :: a -> .1 (a -> Bool) -> (b -> c) -> .1
+const match = a => f => g => (
+	side (match (a)) (_ => $if (f (a)) (g))
 )
-
-/// Simulate match keywords from others languages.
-/// :: [f] -> a -> ([b, f]) | undefined -> ...
-const match = match_ ([])
 
 /// Define getters/setters for a record.
 /// :: ({..} -> {..}) -> ({..} -> {..})
