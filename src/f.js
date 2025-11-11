@@ -219,7 +219,7 @@ const Id = _ => idcounter ++
 
 /// Logger.
 /// :: f -> String -> a -> a
-const logger = f => p => a => side (a) (_ => f(p, a))
+const logger = f => p => a => side (a) (_ => f (p, a))
 
 /// Logger for debug.
 /// :: String -> a -> a 
@@ -231,15 +231,11 @@ const loggere = logger (console.error)
 
 /// Debug logging.
 /// :: a -> a
-const debug = a => side (a) (loggerd ("debug:"))
+const debug = loggerd ("debug:")
 
 /// Error logging.
 /// :: a -> a
-const error = a => side (a) (loggere ("error:"))
-
-/// Defines a deprecated function.
-/// :: s -> f -> f
-const deprecated = s => f => side (f) (_ => loggere ("deprecated:") (s))
+const error = loggere ("error:")
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Lists
