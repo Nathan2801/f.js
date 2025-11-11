@@ -436,7 +436,7 @@ const tabpage = opts => pages => {
 	)
 	const $container = compose ([
 		, opts.buttonscontainer
-		, mapif (setstyle (["order", -1])) (opts.buttonsbefore)
+		, ifa (_=> opts.buttonsbefore) (setstyle (["order", -1]))
 	])
 	return (
 		Monad ()
