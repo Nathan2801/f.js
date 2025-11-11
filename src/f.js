@@ -90,7 +90,7 @@ const $ = chainpp
 
 /// Similar to _chainpp_ but uses a list as input.
 /// NOTE: function execution in order.
-/// :: [(a -> a)] -> (a -> a)
+/// :: [(a -> b)] -> a -> b
 const compose = xs => {
 	const $f = fst (xs)
 	const $fs = rest (xs)
