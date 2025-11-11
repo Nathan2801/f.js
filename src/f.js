@@ -182,6 +182,8 @@ const record = fields => getsetmethods ((a = {}) => (
 ))
 
 /// Used to applies various function that maps {x}.
+/// NOTE: now we have _monad_ which is a simpler _Monad_,
+///       but this is heavily used, so let's keep it, for now.
 /// NOTE: errors when {f} is not a function nor undefined.
 const Monad = x => ({
 	$: f => (
@@ -199,6 +201,14 @@ const Monad = x => ({
 	),
 	$if: c => f => c ? Monad (x).$(f) : Monad (x),
 })
+
+/// What is a monad? Is this monad?
+/// :: a -> .1 (a -> a) -> .1 | a
+const monad = a => f => (
+	typeof f === "function"
+	? monad (f (a))
+	: a
+)
 
 /// String format.
 /// :: String -> [a] -> String
