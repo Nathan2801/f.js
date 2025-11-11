@@ -48,7 +48,13 @@ const swap = f => a => b => f (b) (a)
 
 /// Executes a function if condition is truthy.
 /// :: (a -> a) -> Bool -> a
-const ifx = c => f => c && f ()
+const ifx = deprecated ("ifx deprecated, use $if") (
+	c => f => c && f ()
+)
+
+/// Calls a function if condition is truthy.
+/// :: Bool -> (a -> b) -> b | undefined
+const $if = b => f => b ? f () : undefined
 
 /// A ternary operator but with functions.
 /// :: (a -> b) -> (a -> b) -> Bool -> b
