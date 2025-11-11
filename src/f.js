@@ -56,6 +56,10 @@ const ifx = deprecated ("ifx deprecated, use $if") (
 /// :: Bool -> (a -> b) -> b | undefined
 const $if = b => f => b ? f () : undefined
 
+/// Similar to _$if_ but pass argument to function.
+/// :: (a -> Bool) -> (a -> b) -> a -> b | a
+const ifa = c => f => a => c (a) ? f (a) : a
+
 /// A ternary operator but with functions.
 /// :: (a -> b) -> (a -> b) -> Bool -> b
 const tern = f => g => c => c ? f () : g ()
