@@ -474,12 +474,7 @@ const tabcontroller = e => i => (
 
 /// :: Element -> {state: Any} -> Element
 const Stateful = container => element => state => {
-	const $parent = (
-		Monad ()
-		.$ (container)
-		.$ ($ (children) (List) (element) (state.state))
-		.$ ()
-	)
+	let $parent
 	state.state = new Proxy (state.state, {
 		set (o, k, v) {
 			Reflect.set (...arguments)
@@ -492,6 +487,12 @@ const Stateful = container => element => state => {
 			return true
 		}
 	})
+	$parent = (
+		Monad ()
+		.$ (container)
+		.$ ($ (children) (List) (element) (state.state))
+		.$ ()
+	)
 	return $parent
 }
 
