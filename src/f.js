@@ -390,10 +390,10 @@ const maplist = f => ([x, ...xs]) => (
 )
 
 /// Maps a list with its index.
-/// :: ((a, Int) -> b) -> [a] -> [b]
+/// :: (a -> Int -> b) -> [a] -> [b]
 const maplisti = f => xs => {
 	const $r = range (0) (len (xs) - 1)
-	return maplist (i => f ([xs[i], i])) ($r)
+	return maplist (i => f (xs[i]) (i)) ($r)
 }
 
 /// Splits a list by predicate.
