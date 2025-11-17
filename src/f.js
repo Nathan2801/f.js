@@ -333,6 +333,9 @@ const includes = x => xs => xs.includes (x)
 /// Sum all values in list.
 const sumlist = xs => fold (add) (0) (xs)
 
+/// Returns the reversed array.
+const reverse = xs => xs.toReversed ()
+
 /// Fold a list.
 /// NOTE: should {f} accept a pair or two arguments?
 /// :: (a -> b -> a) -> a -> [b]
