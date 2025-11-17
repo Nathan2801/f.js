@@ -478,12 +478,10 @@ const Stateful = container => element => state => {
 	state.state = new Proxy (state.state, {
 		set (o, k, v) {
 			Reflect.set (...arguments)
-			_ = (
-				Monad ($parent)
-				.$ (setinner (""))
-				.$ ($ (children) (List) (element) (state.state))
-				.$ ()
-			)
+			Monad ($parent)
+			.$ (setinner (""))
+			.$ ($ (children) (List) (element) (state.state))
+			.$ ()
 			return true
 		}
 	})
