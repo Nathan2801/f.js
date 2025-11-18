@@ -308,6 +308,14 @@ const init = xs => xs.slice (0, len (xs) - 1)
 /// :: [a] -> [a]
 const rest = ([x, ...xs]) => xs
 
+/// Skip n elements from the list.
+/// :: Int -> [a] -> [a]
+const skip = n => xs => xs.slice (n)
+
+/// Take n elements from the list.
+/// :: Int -> [a] -> [a]
+const take = n => xs => xs.slice (0, n)
+
 /// Returns a new list with {x} appended to it.
 /// :: a -> [a] -> [a]
 const append = x => xs => [...xs, x]
