@@ -447,6 +447,9 @@ const Num = a => (
 	: 0.0
 )
 
+/// :: Int
+const PI = Math.PI
+
 /// :: Num -> Num -> Num
 /// NOTE: maybe this could be called _sum_.
 const add = a => b => a + b
@@ -465,6 +468,18 @@ const min = a => b => Math.min (a, b)
 
 /// :: Int -> Int -> Int
 const max = a => b => Math.max (a, b)
+
+/// :: Num -> Float
+const cos = a => Math.cos (a)
+
+/// :: Num -> Float
+const sin = a => Math.sin (a)
+
+/// :: Num -> Float
+const sqrt = a => Math.sqrt (a)
+
+/// :: Num -> Float
+const atan2 = y => x => Math.atan2 (y, x)
 
 /// :: Int -> Int -> Int -> Int
 const clamp = a => b => c => $ (min (a)) (max (b)) (c)
