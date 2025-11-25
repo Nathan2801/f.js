@@ -449,7 +449,7 @@ const tabpage = opts => pages => {
 					Monad (pages)
 					.$ (maplist (Tab.button))
 					.$ (maplisti (
-						([e, i]) => {
+						e => i => {
 							const $e = (
 								typeof e === "function"
 								? e (i === $state.state.selected)
