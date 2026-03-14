@@ -1,7 +1,6 @@
 
 import * as fdb from "../../src/fdb.js"
 
-
 const main = async _ => {
 	const VERSION = 1
 	const OBJECT_STORE = "stuff"
@@ -28,7 +27,6 @@ const main = async _ => {
 	const removed = await fdb.del (db) (OBJECT_STORE) (key)
 	loggerd ("Status from deletion (should be undefined!?):") (removed)
 }
-
 
 main ()
 
