@@ -5,6 +5,10 @@
  * - f.js
  * */
 
+//===========================================================
+// Common Properties
+//===========================================================
+
 /// :: Int -> String
 const px = a => a + "px"
 
@@ -22,6 +26,10 @@ const perc = a => a + "%"
 
 /// :: a -> Element e -> Element e
 const setvalue = a => e => side (e) (_ => e.value = a)
+
+//===========================================================
+// Events
+//===========================================================
 
 /// :: String -> (Event -> a) -> Element -> Element
 const addevent = e => f => a => side (a) (_ => a.addEventListener (e, f))
@@ -49,6 +57,9 @@ const onmouseleave = setmethod ("onmouseleave")
 
 /// :: (Event -> a) -> Element -> Element
 const prevent = ev => side (ev) (_ => ev.preventDefault())
+
+/// :: (String -> a) -> Element input -> Element input
+const bindinput = f => oninput ($ (f) (value) (target))
 
 /// :: Element a -> Element a
 const play = a => side (a) (_ => a.play())
@@ -232,6 +243,16 @@ const erase = a => (
 	: a
 )
 
+//===========================================================
+// Elements
+//===========================================================
+
+/// :: String -> Element p
+const p = $inner => $ (setinner ($inner)) (elem) ("p")
+
+/// :: String -> Element b
+const b = $inner => $ (setinner ($inner)) (elem) ("b")
+
 /// :: _ -> Element br
 const br = _ => elem ("br")
 
@@ -256,88 +277,76 @@ const text = inner => chain (setinner (inner)) (elem) ("span")
 /// :: String -> Element label
 const label = inner => chain (setinner (inner)) (elem) ("label")
 
-/// :: _ -> Element div
-const container = _ => elem ("div")
+/// :: _ -> Element form
+const form = _ => elem ("form")
 
-/// :: _ -> Element div
-const box = $ (setstyle (["display", "flex"])) (container)
+/// :: Element label -> Element input -> Element formentry
+const formentry = label => input => (
+	children ([
+		, _ => vbox()
+		, label
+		, input
+	]) (_)
+)
 
-/// :: _ -> Element div
-const vbox = $ (setstyle (["flexDirection", "column"])) (box)
-
-/// :: _ => Element div
-const fullbox = $ (fillspace) (box)
-
-/// :: _ => Element div
-const fullvbox = $ (fillspace) (vbox)
+/// :: String -> Element formentry -> Element formentry
+const liveentry = prefix => entry => side (entry) (_ => {
+	const label = getchild (0) (entry)
+	const input = getchild (1) (entry)
+	const update = _ => setinner (add (prefix) (value (input))) (label)
+	addevent ("input") (update) (input)
+	update ()
+})
 
 /// :: String -> [String] -> Element select
-const select = options => name => (
-	Monad ("select")
-	.$ (elem)
-	.$ (setattr (["name", name]))
-	.$ (children (
-		maplist (a => (
-			Monad ("option")
-			.$ (elem)
-			.$ (setvalue (a))
-			.$ (setinner (a))
-			.$ ()
-		)) (TypedList (String) (options))
-	))
-	.$ ()
-)
+const select = $opts => $name => compose ([
+	, _ => elem ("select")
+	, setattr (["name", $name])
+	, children (
+		maplist ($a =>
+			compose ([
+				, _ => elem ("option")
+				, setinner ($a)
+				, setvalue ($a)
+			]) (_)
+		) ($opts)
+	)
+]) (_)
 
 /// :: String -> Element input
-const input = name => type => (
-	Monad ("input")
-	.$ (elem)
-	.$ (setattr (["type", type]))
-	.$ (setattr (["name", name]))
-	.$ (oninput (_ => debug ("oninput not provided")))
-	.$ ()
-)
-
-/// :: String -> Element input -> Element input
-const placeholder = s => e => setattr (["placeholder", s]) (e)
-
-/// :: (String -> a) -> Element input -> Element input
-const bindinput = f => oninput ($ (f) (value) (target))
+const input = name => type => compose ([
+	, _ => elem ("input")
+	, setattr (["type", type])
+	, setattr (["name", name])
+	, oninput (_ => debug ("oninput not provided"))
+]) (_)
 
 /// :: String -> Element input
-const inputtext = name => input (name) ("text")
+const inputtext = swap (input) ("text")
 
 /// :: String -> String -> (Event -> _) -> Element input
-const inputnumber = name => (
-	Monad (input (name) ("number"))
-	.$ ()
-) 
+const inputnumber = swap (input) ("number")
 
 /// :: String -> (Event -> _) -> Element input
-const inputsubmit = value => (
-	Monad (input ("") ("submit"))
-	.$ (setattr (["value", value]))
-	.$ ()
-)
+const inputsubmit = $value => compose ([
+	, _ => input ("") ("submit")
+	, setavalue ($value)
+]) (_)
 
 /// :: String -> (Event -> _) -> Element textarea
-const textarea = name => (
-	Monad ("textarea")
-	.$ (elem)
-	.$ (setattr (["name", name]))
-	.$ (oninput (_ => debug ("oninput not provided")))
-	.$ ()
-)
+const textarea = $name => compose ([
+	, _ => elem ("textarea")
+	, setattr (["name", $name])
+	, oninput (_ => debug ("oninput not privided"))
+]) (_)
 
 /// :: String -> (Event -> _) -> Element input
-const button = value => (
-	Monad ("input")
-	.$ (elem)
-	.$ (setattr (["value",    value]))
-	.$ (setattr ([ "type", "button"]))
-	.$ (onclick (_ => debug ("onclick not provided")))
-	.$ ()
-)
+const button = $value => compose ([
+	, _ => elem ("input")
+	, setattr (["value", $value])
+	, setattr (["type", "button"])
+	, onclick (_ => debug ("onclick not provided"))
+]) (_)
 
 /// SliderOpts
 const SliderOpts = record ([
@@ -346,14 +355,13 @@ const SliderOpts = record ([
 	, field ("step", Num, 1)
 ])
 
-/// :: Int -> Int -> Int -> (Event -> _) -> Element input
-const slider = name => opts => (
-	Monad (input (name) ("range"))
-	.$ (setattr (["min", SliderOpts.min (opts)]))
-	.$ (setattr (["max", SliderOpts.max (opts)]))
-	.$ (setattr (["step", SliderOpts.step (opts)]))
-	.$ ()
-)
+/// :: String -> SliderOpts -> Element range
+const slider = $name => $opts => compose ([
+	, _ => input ($name) ("range")
+	, setattr (["min" , SliderOpts.min  ($opts)])
+	, setattr (["max" , SliderOpts.max  ($opts)])
+	, setattr (["step", SliderOpts.step ($opts)])
+]) (_)
 
 /// :: CSSValue -> String -> Element svg
 const svg = fill => path => (
@@ -372,6 +380,12 @@ const svg = fill => path => (
 	.$ ()
 )
 
+/// :: String -> Element svg
+const svgwhite = svg ("white")
+
+/// :: String -> Element svg
+const svgblack = svg ("black")
+
 /// :: (Event -> _) -> Element svg -> Element svg
 const svgbutton = _onclick => svg => (
 	Monad (svg)
@@ -380,31 +394,27 @@ const svgbutton = _onclick => svg => (
 	.$ ()
 )
 
-/// :: String -> Element svg
-const svgwhite = svg ("white")
+//===========================================================
+// Containers
+//===========================================================
 
-/// :: String -> Element svg
-const svgblack = svg ("black")
+/// :: _ -> Element div
+const container = _ => elem ("div")
 
-/// :: _ -> Element form
-const form = _ => elem ("form")
+/// :: _ -> Element div
+const box = $ (setstyle (["display", "flex"])) (container)
 
-/// :: Element label -> Element input -> Element formentry
-const formentry = label => input => (
-	Monad (vbox ())
-	.$ (child (label))
-	.$ (child (input))
-	.$ ()
-)
+/// :: _ -> Element div
+const vbox = $ (setstyle (["flexDirection", "column"])) (box)
 
-/// :: String -> Element formentry -> Element formentry
-const liveentry = prefix => entry => side (entry) (_ => {
-	const label = getchild (0) (entry)
-	const input = getchild (1) (entry)
-	const update = _ => setinner (add (prefix) (value (input))) (label)
-	addevent ("input") (update) (input)
-	update ()
-})
+/// :: _ => Element div
+const fullbox = $ (fillspace) (box)
+
+/// :: _ => Element div
+const fullvbox = $ (fillspace) (vbox)
+
+/// :: String -> Element input -> Element input
+const placeholder = s => e => setattr (["placeholder", s]) (e)
 
 /// :: Tab
 const Tab = record ([
