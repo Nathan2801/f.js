@@ -11,74 +11,74 @@
 let _ = null
 
 /// Defines a deprecated function.
-/// :: String -> (a -> b) -> (a -> b)
+/// deprecated :: String -> (a -> b) -> (a -> b)
 const deprecated = s => f => a => {
 	console.warn (s)
 	return f (a)
 }
 
 /// A empty function.
-/// :: _ -> _
+/// pass :: () -> ()
 const pass = _ => _
 
 /// Returns the received value.
-/// :: a -> a
+/// raw :: a -> a
 const raw = a => a
 
 /// Any constructor.
-/// :: a -> a
+/// Any :: a -> a
 const Any = raw
 
 /// Calls the received function.
-/// :: (a -> a) -> a
+/// call :: (a -> a) -> a
 const call = f => f ()
 
 /// Explicitly defines a side-effect and returns the argument.
-/// :: a -> () -> a
+/// side :: a -> () -> a
 const side = a => f => { f (a); return a; }
 
 /// Calls the received function and return it.
-/// :: (a -> a) -> a
+/// once :: (a -> a) -> a
 const once = f => side (f) (f)
 
 /// Swap a function's argument order.
 /// NOTE: in haskell this is called flip.
-/// :: (a -> b -> c) -> a -> b -> c 
+/// swap :: (a -> b -> c) -> a -> b -> c
 const swap = f => a => b => f (b) (a)
 
 /// Executes a function if condition is truthy.
-/// :: (a -> a) -> Bool -> a
+/// ifx :: (a -> a) -> Bool -> a
 const ifx = deprecated ("ifx deprecated, use $if") (
 	c => f => c && f ()
 )
 
 /// Calls a function if condition is truthy.
-/// :: Bool -> (a -> b) -> b | undefined
+/// $ :: Bool -> (a -> b) -> b | undefined
 const $if = b => f => b ? f () : undefined
 
 /// Similar to _$if_ but pass argument to function.
-/// :: (a -> Bool) -> (a -> b) -> a -> b | a
+/// ifa :: (a -> Bool) -> (a -> b) -> a -> b | a
 const ifa = c => f => a => c (a) ? f (a) : a
 
 /// A ternary operator but with functions.
-/// :: (a -> b) -> (a -> b) -> Bool -> b
+/// tern :: (a -> b) -> (a -> b) -> Bool -> b
 const tern = deprecated ("tern deprecated, just use default ternary") (
 	f => g => c => c ? f () : g ()
 )
 
 /// Same as _tern_ but uses a function to obtain the condition.
-/// :: (a -> b) -> (a -> b) -> (c -> Bool) -> b
+/// ternf :: (a -> b) -> (a -> b) -> (c -> Bool) -> b
 const ternf = deprecated ("ternf deprecated, just use default ternary") (
 	f => g => h => c => h (c) ? f () : g ()
 )
 
 /// Chain two functions together.
-/// :: (b -> c) -> (a -> b) -> a -> c
+/// chain :: (b -> c) -> (a -> b) -> a -> c
 const chain = f => g => a => f (g (a))
 
 /// Chain multiple functions together.
 /// NOTE: function execution is backwards.
-/// :: (a -> a) -> (a -> a) | a -> ...
+/// chainpp :: (a -> a) -> (a -> a) | a -> ...
 const chainpp = f => a => (
 	typeof a === "function"
 	? chainpp (chain (f) (a))
@@ -90,7 +90,7 @@ const $ = chainpp
 
 /// Similar to _chainpp_ but uses a list as input.
 /// NOTE: function execution in order.
-/// :: [(a -> b)] -> a -> b
+/// compose :: [(a -> b)] -> a -> b
 const compose = xs => {
 	const $f = fst (xs)
 	const $fs = rest (xs)
@@ -108,57 +108,57 @@ const compose = xs => {
 }
 
 /// Wraps {f} inside a non-arg function.
-/// :: () -> None -> ()
+/// wrap :: () -> None -> ()
 const wrap = deprecated ("wrap deprecated, perfer arrow functions") (
 	f => _ => f ()
 )
 
 /// Returns a new function that calls {f} with {a} as argument.
-/// :: a -> (a -> b) -> () -> b
+/// bind :: a -> (a -> b) -> () -> b
 const bind = deprecated ("bind deprecated, prefer arrow functions") (
 	a => f => _ => f (a)
 )
 
 /// Maps {a} if {c} is truthy otherwise return {a}.
-/// :: (a -> b) -> Bool -> a -> a | b
+/// mapif :: (a -> b) -> Bool -> a -> a | b
 const mapif = deprecated ("mapif deprecated, perfer ifa") (
 	f => c => a => c ? f (a) : a
 )
 
 /// Maps {a} if {c} is truthy returning {c}.
-/// :: (a -> b) -> Bool -> a -> a | b
+/// mapif1 :: (a -> b) -> Bool -> a -> a | b
 const mapif1 = deprecated ("mapif1 deprecated, what this means?") (
 	f => c => a => side (c) (_ => c ? f (a) : a)
 )
 
 /// Creates a pair.
-/// :: a -> b -> [a, b]
+/// pair :: a -> b -> [a, b]
 const pair = a => b => [a, b]
 
 /// Creates a pair of value and it's mapped value.
-/// :: (a -> b) -> a -> [a, b]
+/// pairf :: (a -> b) -> a -> [a, b]
 const pairf = f => a => pair (a) (f (a))
 
 /// Maps a pair.
-/// :: (a -> b) -> (c -> d) -> [a, c] -> [b, d]
+/// mappair :: (a -> b) -> (c -> d) -> [a, c] -> [b, d]
 const mappair = f => g => ([a, c]) => [f (a), g (c)]
 
 /// Uses pair as arguments for function.
-/// :: (a -> b -> c) -> [a, b] -> c
+/// pairargs :: (a -> b -> c) -> [a, b] -> c
 const pairargs = f => ([a, b]) => f (a) (b)
 
 /// Pattern matching.
-/// :: a -> .1 (a -> Bool) -> (b -> c) -> .1
+/// match :: a -> .1 (a -> Bool) -> (b -> c) -> .1
 const match = a => f => g => (
 	side (match (a)) (_ => $if (f (a)) (g))
 )
 
 /// Define getters/setters for a record.
-/// :: ({..} -> {..}) -> ({..} -> {..})
+/// getsetmethods :: ({..} -> {..}) -> ({..} -> {..})
 const getsetmethods = a => getsetmethods0 (a) ($ (proplist) (a) ({}))
 
 /// Base implementation for _getsetmethods_.
-/// :: ({..} -> {..}) -> ({..} -> {..})
+/// getsetmethods0 :: ({..} -> {..}) -> ({..} -> {..})
 const getsetmethods0 = a => ([f, ...fs]) => (
 	f === undefined
 	? a
@@ -170,11 +170,11 @@ const getsetmethods0 = a => ([f, ...fs]) => (
 )
 
 /// Syntax for defining record fields.
-/// :: (String, (a -> b), b) -> (String, (a -> b), b)
+/// field :: (String, (a -> b), b) -> (String, (a -> b), b)
 const field = (name, type, ...initial) => [name, type, ...initial]
 
 /// Objects with properties, setters and getters.
-/// :: [(String, (a -> b))] -> ({..} -> {..})
+/// record :: [(String, (a -> b))] -> ({..} -> {..})
 const record = fields => getsetmethods ((a = {}) => (
 	fold (b => ([name, type, init]) => side (b) (_ => {
 		b[name] = a[name] ? type (a[name]) : type (init)
@@ -203,7 +203,7 @@ const Monad = x => ({
 })
 
 /// What is a monad? Is this monad?
-/// :: a -> .1 (a -> a) -> .1 | a
+/// monad :: a -> .1 (a -> a) -> .1 | a
 const monad = a => f => (
 	typeof f === "function"
 	? monad (f (a))
@@ -211,7 +211,7 @@ const monad = a => f => (
 )
 
 /// String format.
-/// :: String -> [a] -> String
+/// format :: String -> [a] -> String
 const format = s => ([x, ...xs]) => (
 	x === undefined
 	? s
@@ -219,11 +219,11 @@ const format = s => ([x, ...xs]) => (
 )
 
 /// Identifier counter.
-/// :: Int
+/// idcounter :: Int
 let idcounter = 0
 
 /// Creates a identifier.
-/// :: String -> _ -> Int
+/// Id :: String -> () -> Int
 const Id = _ => idcounter ++
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,23 +231,23 @@ const Id = _ => idcounter ++
 ///////////////////////////////////////////////////////////////////////////////
 
 /// Logger.
-/// :: f -> String -> a -> a
+/// logger :: f -> String -> a -> a
 const logger = f => p => a => side (a) (_ => f (p, a))
 
 /// Logger for debug.
-/// :: String -> a -> a 
+/// loggerd :: String -> a -> a
 const loggerd = logger (console.debug)
 
 /// Logger for error.
-/// :: String -> a -> a 
+/// loggere :: String -> a -> a
 const loggere = logger (console.error)
 
 /// Debug logging.
-/// :: a -> a
+/// debug :: a -> a
 const debug = loggerd ("debug:")
 
 /// Error logging.
-/// :: a -> a
+/// error :: a -> a
 const error = loggere ("error:")
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@ const error = loggere ("error:")
 ///////////////////////////////////////////////////////////////////////////////
 
 /// List type function.
-/// :: a -> List
+/// List :: a -> [a]
 const List = x => (
 	x instanceof Array
 	? filter (ne (undefined)) (x)
@@ -284,52 +284,52 @@ const single = a => [a]
 const len = xs => xs.length
 
 /// Returns the first item in the list.
-/// :: [a] -> a
+/// fst :: [a] -> a
 const fst = xs => xs[0]
 
 /// Returns the seconds item in the list.
-/// :: [a] -> a
+/// snd :: [a] -> a
 const snd = xs => xs[1]
 
 /// Returns the last item in the list.
-/// :: [a] -> a | undefined
+/// last :: [a] -> a | undefined
 const last = xs => xs[len (xs) - 1]
 
 /// Returns the nth item in the list.
-/// :: Int -> [a] -> a
+/// nth :: Int -> [a] -> a
 const nth = n => xs => xs[n]
 
 /// Returns all elements except the last one.
-/// :: [a] -> [a]
+/// init :: [a] -> [a]
 const init = xs => xs.slice (0, len (xs) - 1)
 
 /// Returns the list without the first argument.
 /// NOTE: in haskell this is called tail.
-/// :: [a] -> [a]
+/// rest :: [a] -> [a]
 const rest = ([x, ...xs]) => xs
 
 /// Skip n elements from the list.
-/// :: Int -> [a] -> [a]
+/// skip :: Int -> [a] -> [a]
 const skip = n => xs => xs.slice (n)
 
 /// Take n elements from the list.
-/// :: Int -> [a] -> [a]
+/// take :: Int -> [a] -> [a]
 const take = n => xs => xs.slice (0, n)
 
 /// Returns a new list with {x} appended to it.
-/// :: a -> [a] -> [a]
+/// append :: a -> [a] -> [a]
 const append = x => xs => [...xs, x]
 
 /// Returns the same list with {x} appended to it.
-/// :: a -> [a] -> [a]
+/// push :: a -> [a] -> [a]
 const push = x => xs => side (xs) (_ => xs.push (x))
 
 /// Shifts one item from the list.
-/// :: a -> [a] -> [a]
+/// shift :: a -> [a] -> [a]
 const shift = xs => side (xs) (_ => xs.shift (1))
 
 /// Duplicates {a} into a list.
-/// :: a -> [a, a]
+/// dup :: a -> [a, a]
 const dup = x => [x, x]
 
 /// Get the index of a value in a list.
@@ -346,7 +346,7 @@ const reverse = xs => xs.toReversed ()
 
 /// Fold a list.
 /// NOTE: should {f} accept a pair or two arguments?
-/// :: (a -> b -> a) -> a -> [b]
+/// fold :: (a -> b -> a) -> a -> [b]
 const fold = f => a => ([x, ...xs]) => (
 	x === undefined
 	? (
@@ -358,7 +358,7 @@ const fold = f => a => ([x, ...xs]) => (
 )
 
 /// Find in list.
-/// :: (a -> Bool) -> [a] -> a
+/// find :: (a -> Bool) -> [a] -> a
 const find = f => xs => {
 	const $x = fst (xs)
 	const $xs = rest (xs)
@@ -370,7 +370,7 @@ const find = f => xs => {
 }
 
 /// Filter a list.
-/// :: (a -> Bool) -> [a]
+/// filter :: (a -> Bool) -> [a]
 const filter = f => ([x, ...xs]) => (
 	x === undefined
 	? (
@@ -386,7 +386,7 @@ const filter = f => ([x, ...xs]) => (
 )
 
 /// Maps a list.
-/// :: (a -> b) -> [a] -> [b]
+/// maplist :: (a -> b) -> [a] -> [b]
 const maplist = f => ([x, ...xs]) => (
 	x === undefined
 	? (
@@ -398,14 +398,14 @@ const maplist = f => ([x, ...xs]) => (
 )
 
 /// Maps a list with its index.
-/// :: (a -> Int -> b) -> [a] -> [b]
+/// maplisti :: (a -> Int -> b) -> [a] -> [b]
 const maplisti = f => xs => {
 	const $r = range (0) (len (xs) - 1)
 	return maplist (i => f (xs[i]) (i)) ($r)
 }
 
 /// Splits a list by predicate.
-/// :: (a -> Bool) -> [a] -> [[a], [a]]
+/// splitbypred :: (a -> Bool) -> [a] -> [[a], [a]]
 const splitbypred = f => ([x, ...xs]) => (
 	x === undefined
 	? [[], []]
@@ -420,125 +420,125 @@ const splitbypred = f => ([x, ...xs]) => (
 /// Comparators
 ///////////////////////////////////////////////////////////////////////////////
 
-/// :: a -> a -> Bool
+/// eq :: a -> a -> Bool
 const eq = a => b => b === a
 
-/// :: a -> a -> Bool
+/// ne :: a -> a -> Bool
 const ne = a => b => b !== a
 
-/// :: a -> a -> Bool
+/// le :: a -> a -> Bool
 const le = a => b => b <= a
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Math
 ///////////////////////////////////////////////////////////////////////////////
 
-/// :: Int
+/// Int :: Int
 const Int = a => (
 	!Number.isNaN (Number (a))
 	? round (Number (a))
 	: 0
 )
 
-/// :: Num
+/// Num :: Num
 const Num = a => (
 	!Number.isNaN (Number (a))
 	? Number (a)
 	: 0.0
 )
 
-/// :: Int
+/// PI :: Int
 const PI = Math.PI
 
-/// :: Num -> Num -> Num
+/// add :: Num -> Num -> Num
 /// NOTE: maybe this could be called _sum_.
 const add = a => b => a + b
 
-/// :: Num -> Num -> Num
+/// sub :: Num -> Num -> Num
 const sub = a => b => a - b
 
-/// :: Num -> Num -> Num
+/// mul :: Num -> Num -> Num
 const mul = a => b => a * b
 
-/// :: Num -> Num -> Num
+/// div :: Num -> Num -> Num
 const div = a => b => a / b
 
-/// :: Int -> Int -> Int
+/// min :: Int -> Int -> Int
 const min = a => b => Math.min (a, b)
 
-/// :: Int -> Int -> Int
+/// max :: Int -> Int -> Int
 const max = a => b => Math.max (a, b)
 
-/// :: Num -> Float
+/// cos :: Num -> Float
 const cos = a => Math.cos (a)
 
-/// :: Num -> Float
+/// sin :: Num -> Float
 const sin = a => Math.sin (a)
 
-/// :: Num -> Float
+/// sqrt :: Num -> Float
 const sqrt = a => Math.sqrt (a)
 
-/// :: Num -> Float
+/// atan2 :: Num -> Float
 const atan2 = y => x => Math.atan2 (y, x)
 
-/// :: Int -> Int -> Int -> Int
+/// clamp :: Int -> Int -> Int -> Int
 const clamp = a => b => c => $ (min (a)) (max (b)) (c)
 
-/// :: Float -> Int
+/// round :: Float -> Int
 const round = n => Math.round (n)
 
-/// :: Float -> Int
+/// floor :: Float -> Int
 const floor = n => Math.floor (n)
 
-/// :: Int -> Float
+/// random :: Int -> Float
 const random = n => Math.random () * (n + 1)
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Js Helpers 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// :: a -> b
+/// value :: a -> b
 const value = x => x.value
 
-/// :: a -> b
+/// errorof :: a -> b
 const errorof = x => x.error
 
-/// :: a -> b
+/// result :: a -> b
 const result = x => x.result
 
-/// :: a -> b
+/// target :: a -> b
 const target = x => x.target
 
-/// :: {..} -> {..}
+/// copyobject :: {..} -> {..}
 const copyobject = o => Object.assign ({}, o) 
 
-/// :: String -> () -> Object a -> Object a
+/// setmethod :: String -> () -> Object a -> Object a
 const setmethod = m => f => o => side (o) (_ => o[m] = f)
 
-/// :: String -> Object a -> b
+/// callmethod :: String -> Object a -> b
 const callmethod = m => o => o[m]()
 
-/// :: Object a -> b
+/// totext :: Object a -> b
 const totext = callmethod ("text")
 
-/// :: Object a -> b
+/// tojson :: Object a -> b
 const tojson = callmethod ("json")
 
-/// :: Object a -> String
+/// tostring :: Object a -> String
 const tostring = callmethod ("toString")
 
-/// :: Object a -> Blob
+/// toblob :: Object a -> Blob
 const toblob = callmethod ("blob")
 
-/// :: () -> Int -> Int
+/// timeout :: () -> Int -> Int
 const timeout = f => s => setTimeout (f, s) 
 
-/// :: () -> Int -> Int
+/// interval :: () -> Int -> Int
 const interval = f => s => setInterval (f, s) 
 
-/// :: Int -> _
+/// clearinterval :: Int -> ()
 const clearinterval = i => clearInterval (i) 
 
-/// :: {..} -> [String]
+/// proplist :: {..} -> [String]
 const proplist = a => Object.getOwnPropertyNames (a)
 
