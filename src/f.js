@@ -493,6 +493,48 @@ const floor = n => Math.floor (n)
 /// random :: Int -> Float
 const random = n => Math.random () * (n + 1)
 
+////////////////////////////////////////////////////////////
+/// Iterator
+////////////////////////////////////////////////////////////
+
+/// Defines a iterator.
+/// iterator :: a -> (a -> Bool) -> (a -> a) -> () -> a
+const iterator = value => cond => next => _ => (
+	cond (value)
+	? side (value) (_ => value = next (value))
+	: null
+)
+
+/// Returns an iterator where every value is mapped.
+/// iterator.map :: (a -> b) -> iterator a -> () -> b
+iterator.map = mapf => itarg => _ => {
+	const a = itarg ()
+	return (
+		eq (a) (null)
+		? null
+		: mapf (a)
+	)
+}
+
+/// Consume the iterator into a list.
+/// iterator.tolist :: iterator a -> List a
+iterator.tolist = itarg => {
+	const a = itarg ()
+	return (
+		eq (a) (null)
+		? []
+		: [a, ...iterator.tolist (itarg)]
+	)
+}
+
+/// Returns a infinite incremental iterator.
+/// iterator.iota :: () -> iterator Int
+iterator.iota = _ => iterator (0) (_ => true) (a => a + 1)
+
+/// Returns an iterator over a range.
+/// iterator.range :: Int -> Int -> iterator Int
+iterator.range = a => b => iterator (a) (a => a < b) (a => a + 1)
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Js Helpers 
 ///////////////////////////////////////////////////////////////////////////////
