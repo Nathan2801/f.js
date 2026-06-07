@@ -280,6 +280,17 @@ const label = inner => chain (setinner (inner)) (elem) ("label")
 /// :: _ -> Element form
 const form = _ => elem ("form")
 
+/// :: String -> Element img
+const img = src => setattr (["src", src]) (elem ("img"))
+
+/// :: String -> String -> Element img
+const imgalt = alt => src =>
+	compose ([
+		, elem
+		, setattr (["alt", alt])
+		, setattr (["src", src])
+	]) ("img")
+
 /// :: Element label -> Element input -> Element formentry
 const formentry = label => input => (
 	children ([
